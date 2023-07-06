@@ -108,6 +108,11 @@ func (p *plugin) CreateContainer(_ context.Context, pod *api.PodSandbox, contain
 
 	adjust := &api.ContainerAdjustment{}
 
+	existingPath := container.Linux.GetCgroupsPath()
+	newPath := fmt.Sprintf("%s/%s", "injectedpath", existingPath)
+	log.Infof("Adjusting cgroup path from [%s] to [%s]", existingPath, newPath)
+	adjust.Linux.CgroupsPath = newPath
+
 	if cfg.AddAnnotation != "" {
 		adjust.AddAnnotation(cfg.AddAnnotation, fmt.Sprintf("logger-pid-%d", os.Getpid()))
 	}
